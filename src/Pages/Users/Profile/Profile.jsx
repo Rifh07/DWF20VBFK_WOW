@@ -1,12 +1,15 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Button } from "react-bootstrap"
 import { faEnvelope, faTransgender, faPhoneAlt, faSearchLocation } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
-import { Books } from '../../../Component/Home/data'
+import { AppContext } from "../../../Context/GlobalContext"
 import Card from '../../../Component/Home/Card'
 
 function Profile() {
+  const [state] = useContext(AppContext)
+  const { books } = state;
+
   return (
     <div className="mb-5">
       <div className="mt-5">
@@ -71,8 +74,8 @@ function Profile() {
       <div className="mt-5">
         <h3 className="name-home">My List Book</h3>
       </div>
-      <div className="row mt-1 align-item-center">
-        {Books.map((book) => (
+      <div className="row mt-1 align-item-start">
+        {books.map((book) => (
             <div className="col-md-3" key={book.id}>
               <Card
                 book={book}

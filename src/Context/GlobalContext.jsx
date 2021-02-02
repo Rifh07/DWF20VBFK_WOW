@@ -6,7 +6,8 @@ const initialState = {
   isLogin: false,
   email: "",
   fullname: "",
-  subscribe: false
+  subscribe: false,
+  books: [],
 }
 
 const reducer = (state, action) => {
@@ -24,6 +25,16 @@ const reducer = (state, action) => {
         ...state,
         subscribe: true,
       }
+    case "Add_Book":
+        return {
+            ...state,
+            books: [
+                ...state.books,
+                {
+                    ...action.payload,
+                },
+            ],
+        }
     case "LOGOUT":
       return {
         ...state,

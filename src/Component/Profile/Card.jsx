@@ -37,7 +37,7 @@ function Card({book}) {
             <Modal.Body className="width-100" id="contained-modal-title-vcenter">
                 <p className="text-center c-red"> Please make a payment to read the latest books</p>
             </Modal.Body>
-          </Modal>
+        </Modal>
         </div>
     )
 }

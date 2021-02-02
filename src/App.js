@@ -8,6 +8,7 @@ import LandingPage from "./Pages/LandingPage/LandingPage";
 import Sidebar from "./Component/Sidebar";
 import Home from "./Pages/Users/Home/Home";
 import Subscribe from "./Pages/Users/Subscribe/Subscribe";
+import Profile from "./Pages/Users/Profile/Profile";
 
 function App() {
   return (
@@ -22,8 +23,9 @@ function App() {
               <Sidebar />
             </Col>
             <Col xs={8} id="page-content-wrapper">
-              <PrivateRoute path="/Subscribe" exact component={Subscribe} />
               <PrivateRoute path="/Home" exact component={Home} />
+              <PrivateRoute path="/Subscribe" exact component={Subscribe} />
+              <PrivateRoute path="/Profile" exact component={Profile} />
             </Col>
           </Row>
         </Container>

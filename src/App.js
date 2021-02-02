@@ -1,10 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
+
 import PrivateRoute from "./Component/PrivateRoute";
+
+import LandingPage from "./Pages/LandingPage/LandingPage";
 import Sidebar from "./Component/Sidebar";
 import Home from "./Pages/Users/Home/Home";
-import LandingPage from "./Pages/LandingPage/LandingPage";
+import Subscribe from "./Pages/Users/Subscribe/Subscribe";
 
 function App() {
   return (
@@ -19,6 +22,7 @@ function App() {
               <Sidebar />
             </Col>
             <Col xs={8} id="page-content-wrapper">
+              <PrivateRoute path="/Subscribe" exact component={Subscribe} />
               <PrivateRoute path="/Home" exact component={Home} />
             </Col>
           </Row>

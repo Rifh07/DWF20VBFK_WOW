@@ -19,6 +19,11 @@ const reducer = (state, action) => {
         isLogin: true,
 
       }
+    case "Subscribe":
+      return {
+        ...state,
+        subscribe: true,
+      }
     case "LOGOUT":
       return {
         ...state,

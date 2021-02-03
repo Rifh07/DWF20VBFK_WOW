@@ -38,6 +38,14 @@ function LandingPage() {
         
       });
       history.push("/Home");
+    } else if (FormLogin.email === "syarifhidayat400@gmail.com" && FormLogin.password === "1234567890") {
+      dispatch({
+        type: "LOGIN_SUCCESS",
+          email: FormLogin.email,
+          fullname: FormLogin.fullname,
+        
+      });
+      history.push("/Transaction");
     } else {
       setShowLogin((
         <Alert variant="danger" onClose={() => setShowLogin(false)} dismissible>

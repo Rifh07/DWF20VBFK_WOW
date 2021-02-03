@@ -11,6 +11,7 @@ import Subscribe from "./Pages/Users/Subscribe/Subscribe";
 import Profile from "./Pages/Users/Profile/Profile";
 import Book from "./Pages/Users/Book/Book";
 import Read from "./Pages/Users/Book/Read";
+import Transaction from "./Pages/Admin/Transaction";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         {/* Tanpa Auth */}
         <Route path="/" exact component={LandingPage} />
         {/* Dengan Auth */}
+        <PrivateRoute path="/Transaction" exact component={Transaction} />
+
         <PrivateRoute path="/Book/:id/Read" exact component={Read} />
         <Container fluid className="mb-5">
           <Row>

@@ -123,6 +123,9 @@ body {
 .book-content {
     width:100%
 }
+.admin-profile {
+    
+}
 .form-grey {
     background: rgba(210, 210, 210, 0.25);
     border: 2px solid #BCBCBC;
@@ -161,6 +164,9 @@ body {
 }
 .font-size-25 {
     font-size: 23px;
+}
+.font-dropdown-size {
+    font-size: 12px;
 }
 .bg-grey{
     background: rgba(205, 205, 205, 0.7);

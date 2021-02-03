@@ -13,8 +13,8 @@ function Book() {
   const { books } = state;
 
   const { id } = useParams();
-  const filteredBook = Books.find(Bookss => Bookss.Id == id)
-  const buku = books.find(book => book.Id == id)
+  const filteredBook = Books.find(Bookss => Bookss.Id === id)
+  const buku = books.find(book => book.Id === id)
 
   const myList = () => {
     dispatch({

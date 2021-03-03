@@ -1,11 +1,13 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext } from "react";
 import { Button, Modal } from "react-bootstrap"
 
-import { AppContext } from "../../../Context/GlobalContext"
+import { AppContext } from "../../../Context/GlobalContext";
+import { API } from "../../../Config/Api";
+import { Link } from "react-router-dom";
 
 
 function Subscribe() {
-  const [state, dispatch] = useContext(AppContext)
+  const [state] = useContext(AppContext)
   const [alert, setAlert] = useState(false)
   const handleAlert = () => {
       setAlert(true)
@@ -14,27 +16,59 @@ function Subscribe() {
       setAlert(false)
     }
 
-  const [FormSubs, setForm] = useState({
-    AccountNumber: "",
-    file: "",
-  })
-  
-
-  const onChangeSubs = (e) => {
-    setForm({ ...FormSubs, [e.target.name]: e.target.value })
-  }
-
-  const Subscribe = (e) => {
-    e.preventDefault()
-    if (FormSubs.AccountNumber === "0981312323"){
-      dispatch({
-        type: "Subscribe",
+    // image Handler
+    const [formImage, setFormImage] = useState({
+      fileName : "",
+      transferProof : null,
+    });
+    const imageHandler = (e) => {
+      setFormImage({
+        transferProof : e.target.files[0],
+        fileName : e.target.files[0].name
       })
-      handleAlert()
-    } else {
-      
+    };
+
+    // form Handler
+    const [form, setForm] = useState({
+      accountNumber : "",
+    });
+
+    const { accountNumber } = form;
+    const { transferProof } = formImage;
+
+    const onChange = (e) => {
+      setForm({
+        accountNumber : e.target.value,
+      })
     }
+
+  const Subscribe = async (e) => {
+    e.preventDefault();
+    try {
+      const body = new FormData();
+      body.append("userId", state.user.id);
+      body.append("accountNumber", accountNumber);
+      body.append("transferProof", transferProof);
+
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      const transaction = await API.post('/transaction', body, config);
+      
+      if (transaction) {
+        setForm({accountNumber : ""})
+        setFormImage({transferProof : "" ,fileName : ""})
+        handleAlert()
+      }
+      
+    } catch (error) {
+      console.log(error);
+    } 
   }
+
   return (
     <div className="text-center col-subscribe">
       <h4 className="name-home mb-4">Premium</h4>
@@ -50,10 +84,10 @@ function Subscribe() {
         </div>
         <div className="form-group">
           <input
-            type="text"
+            type="number"
             className="form-control form-grey"
-            name="AccountNumber"
-            onChange={(e) => onChangeSubs(e)}
+            name="accountNumber"
+            onChange={(e) => onChange(e)}
             placeholder="Input your account number"
           />
         </div>
@@ -61,8 +95,8 @@ function Subscribe() {
           <input
             type="file"
             className="form-control form-grey"
-            name="file"
-            onChange={(e) => onChangeSubs(e)}
+            name="transferProof"
+            onChange={(e) => imageHandler(e)}
             id="actual-btn"
             hidden
           />
@@ -87,7 +121,7 @@ function Subscribe() {
             </div>
           </label>
           <div className="text-left"><span id="file-chosen">
-            {FormSubs.file ? FormSubs.file : "No file chosen"}
+            {formImage.fileName ? formImage.fileName : "No file chosen"}
           </span></div>
         </div>
         <div className="form-group">
@@ -100,10 +134,10 @@ function Subscribe() {
       </form>
 
       <Modal aria-labelledby="contained-modal-title-vcenter" centered show={alert} onHide={handleAlertc}>
-            <Modal.Body className="width-100" id="contained-modal-title-vcenter">
-                <p className="text-center c-green"> Thank you for subscribing to premium, your premium package will be active after our admin approves your transaction, thank you</p>
-            </Modal.Body>
-        </Modal>
+        <Modal.Body className="width-100" id="contained-modal-title-vcenter">
+            <p className="text-center c-green"> Thank you for subscribing to premium, your premium package will be active after our admin approves your transaction, thank you</p>
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }

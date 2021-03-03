@@ -1,52 +1,91 @@
-import React, { useState, useContext } from "react"
-import { AppContext } from "../../Context/GlobalContext"
-import { Button, Modal, Alert } from "react-bootstrap"
-import { useHistory } from "react-router-dom"
+import React, { useState, useContext, useEffect } from "react";
+import { API, setAuthToken } from "../../Config/Api";
+import { AppContext } from "../../Context/GlobalContext";
+import { Button, Modal, Alert } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 
 function LandingPage() {
   const history = useHistory();
   const [state, dispatch] = useContext(AppContext);
+
+  useEffect(() => {
+    if (!state.loading && state.isLogin) history.push("/Home");
+  }, []);
 
   const [signIn, setSignIn] = useState(false);
   const [signUp, setSignUp] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [FormData, setForm] = useState({
+    fullName: "",
     email: "",
     password: "",
-    fullname: "",
+    phone: "",
+    address: "",
+    gender: "",
+    subscribe: "",
   });
-  const [FormLogin, setFormLogin] = useState({
-    email: "",
-    password: "",
-  });
-  const Register = (e) => {
+
+  const { fullName, email, password, phone, address, gender } = FormData;
+
+  const Register = async (e) => {
     e.preventDefault();
-    setShowRegister((
-      <Alert variant="success" onClose={() => setShowRegister(false)} dismissible>
-        <p>Your registration is successful</p>
-      </Alert>
-    ))
-  };
-  const Login = (e) => {
-    e.preventDefault();
-    if (FormLogin.email === FormData.email && FormLogin.password === FormData.password){
-      dispatch({
-        type: "LOGIN_SUCCESS",
-          email: FormData.email,
-          fullname: FormData.fullname,
-        
+    try {
+      const body = JSON.stringify({
+        fullName, email, password, phone, address, gender
       });
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const user = await API.post("/register", body, config);
+      await dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: user.data.data.user,
+        payloadToken: user.data.data.token,
+      });
+
+      setAuthToken(user.data.data.token);
+
       history.push("/Home");
-    } else if (FormLogin.email === "syarifhidayat400@gmail.com" && FormLogin.password === "1234567890") {
+    } catch (error) {
+      setShowRegister((
+        <Alert variant="danger" onClose={() => setShowRegister(false)} dismissible>
+          <p>Email already exists</p>
+        </Alert>
+      ))
+    }
+  };
+
+  const Login = async (e) => {
+    e.preventDefault();
+    try {
+      const body = JSON.stringify({
+        email,
+        password
+      });
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const user = await API.post("/login", body, config);
+
       dispatch({
         type: "LOGIN_SUCCESS",
-          email: FormLogin.email,
-          fullname: FormLogin.fullname,
-        
+        payload: user.data.data.user,
+        payloadToken: user.data.data.token,
       });
-      history.push("/Transaction");
-    } else {
+
+      setAuthToken(user.data.data.token);
+
+      history.push("/Home");
+    } catch (error) {
       setShowLogin((
         <Alert variant="danger" onClose={() => setShowLogin(false)} dismissible>
           <p>Username or password incorrect</p>
@@ -57,9 +96,7 @@ function LandingPage() {
   const onChange = (e) => {
     setForm({ ...FormData, [e.target.name]: e.target.value });
   };
-  const onChangeLogin = (e) => {
-    setFormLogin({ ...FormLogin, [e.target.name]: e.target.value });
-  };
+
   const handleClose = () => {
     setSignIn(false)
     setSignUp(false)
@@ -103,10 +140,10 @@ function LandingPage() {
                 {showLogin}
               </div>
               <div className="form-group">
-                <input type="email" className="form-control form-grey" name="email" onChange={(e) => onChangeLogin(e)} placeholder="Email" />
+                <input type="email" className="form-control form-grey" name="email" onChange={(e) => onChange(e)} placeholder="Email" />
               </div>
               <div className="form-group">
-                <input type="password" className="form-control form-grey" name="password" onChange={(e) => onChangeLogin(e)} placeholder="Password" />
+                <input type="password" className="form-control form-grey" name="password" onChange={(e) => onChange(e)} placeholder="Password" />
               </div>
               <div className="form-group">
                 <Button variant="danger" className="form-control bg-red" type="submit"> Sign In </Button>
@@ -129,13 +166,26 @@ function LandingPage() {
                 {showRegister}
               </div>
               <div className="form-group">
+                <input type="text"  className="form-control form-grey" name="fullName"  onChange={(e) => onChange(e)} placeholder="Full Name" />
+              </div>
+              <div className="form-group">
                 <input type="email"  className="form-control form-grey" name="email"  onChange={(e) => onChange(e)} placeholder="Email" />
               </div>
               <div className="form-group">
                 <input type="password" className="form-control  form-grey" name="password" onChange={(e) => onChange(e)} placeholder="Password" />
               </div>
               <div className="form-group">
-                <input type="text" className="form-control  form-grey" name="fullname" onChange={(e) => onChange(e)}placeholder="Full Name" />
+                <select name="gender" className="form-control  form-grey" onChange={(e) => onChange(e)} >
+                  <option disabled selected>== Gender ==</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <input type="number" className="form-control  form-grey" name="phone" onChange={(e) => onChange(e)} placeholder="Phone Number" />
+              </div>
+              <div className="form-group">
+                <input type="text" className="form-control  form-grey" name="address" onChange={(e) => onChange(e)} placeholder="Address" />
               </div>
               <div className="form-group">
                 <Button variant="danger" className="form-control bg-red" type="submit"> Sign Up </Button>

@@ -8,13 +8,13 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
-      "type": "image/png",
+      "src": "/Img/Content/wow-mini.png",
+      "type": "image/icon",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
-      "type": "image/png",
+      "src": "/Img/Content/wow-mini.png",
+      "type": "image/icon",
       "sizes": "512x512"
     }
   ],

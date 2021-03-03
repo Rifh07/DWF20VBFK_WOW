@@ -74,14 +74,16 @@ body {
     margin-top: -100px;
 }
 .home-img-book{
-    width: 100%;
+    width: 169px;
+    height: 239px;
+    object-fit: cover;
 }
 .book{
     width: 100%;
 }
 .home-title-book {
     min-height: 24px;
-    max-height: 60px;
+    max-height: 54px;
     text-overflow: ellipsis;
     overflow: hidden;
 }
@@ -122,9 +124,6 @@ body {
 }
 .book-content {
     width:100%
-}
-.admin-profile {
-    
 }
 .form-grey {
     background: rgba(210, 210, 210, 0.25);

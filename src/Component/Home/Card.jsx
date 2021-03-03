@@ -1,43 +1,29 @@
-import React, { useContext, useState } from "react"
-import { useHistory } from 'react-router-dom'
-import { Modal } from "react-bootstrap"
+import React, { useContext } from "react";
+import { useHistory } from 'react-router-dom';
 
 import { AppContext } from "../../Context/GlobalContext"
 
-function Card({book}) {
+function Card({book, handleAlert}) {
     const [state] = useContext(AppContext)
     const history = useHistory()
-    const { Id, Title, Author, Image } = book
-    const [alert, setAlert] = useState(false)
-    const handleAlert = () => {
-        setAlert(true)
-      }
-      const handleAlertc = () => {
-        setAlert(false)
-      }
+    const { id, title, author, coverFile } = book
 
     const detailBook = () => {
         if (state.subscribe === true){
-            history.push(`/Book/${Id}/Detail`)
+            history.push(`/Book/${id}/Detail`)
         } else {
             handleAlert()
         }
       }
     return (
-        <div className="col-md-12 cursor" onClick={detailBook}>
-          <img className="mb-3 home-img-book" src={'/Img/Book/'+Image} alt="" />
+        <div className="col-md-3 mb-5 cursor" onClick={detailBook}>
+          <img className="mb-3 home-img-book rounded" src={'/Img/BookCover/'+coverFile} alt="" />
           <div className="text-left">
             <div className="home-title-book">
-              <h5 className="name-home">{Title}</h5>
+              <h5 className="name-home">{title}</h5>
             </div>
-            <h6 className="penulis-home">{Author}</h6>
+            <h6 className="penulis-home">{author}</h6>
           </div>
-
-          <Modal aria-labelledby="contained-modal-title-vcenter" centered show={alert} onHide={handleAlertc}>
-            <Modal.Body className="width-100" id="contained-modal-title-vcenter">
-                <p className="text-center c-red"> Please make a payment to read the latest books</p>
-            </Modal.Body>
-          </Modal>
         </div>
     )
 }

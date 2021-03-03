@@ -1,21 +1,69 @@
-import React, { useContext } from "react"
-import { useHistory } from "react-router-dom"
+import React, { useContext, useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { NavDropdown, Dropdown } from "react-bootstrap";
 import { faBook, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { AppContext } from "../../Context/GlobalContext"
+import { API } from "../../Config/Api";
+import { AppContext } from "../../Context/GlobalContext";
+import TableTransaction from "../../Component/Transaction/TableTransaction";
+import Loading from "../../Component/Loading";
 
 function Transaction() {
-    const history = useHistory();
-    const [state, dispatch] = useContext(AppContext);
-    function logout() {
-          dispatch({
-            type: "LOGOUT",
-          })
-          history.push("/")
+  const history = useHistory();
+  const [state, dispatch] = useContext(AppContext);
+  const [transaction, setTransaction] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (state.user.role !== "Admin") {
+      history.push("/");
+    }
+    getTransaction();
+    setLoading(false);
+  }, []);
+
+  const getTransaction = async () => {
+    try {
+      const transaction = await API.get("/transaction");
+      await setTransaction(transaction.data.data.transactions);
+    } catch (error) {
+      
+    }
+  }
+
+  const action = async (id, userStatus, paymentStatus) => {
+    try {
+      const remainingActive = 30;
+      
+      const body = JSON.stringify({
+        remainingActive, userStatus, paymentStatus
+      });
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      setLoading(true);
+      const transaction = await API.patch(`/transaction/${id}`, body, config);
+      if (transaction) {
+        getTransaction();
       }
+      setLoading(false);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  function logout() {
+    dispatch({
+      type: "LOGOUT",
+    })
+    history.push("/")
+  }
   return (
     <div className="mt-5 ml-5 pl-5 pr-5 mr-5 pr-5">
       <Link to="/Transaction" as={Link} className="none-decoration inline">
@@ -50,114 +98,9 @@ function Transaction() {
             </tr>
           </thead>
           <tbody>
-            <tr className="align-middle">
-              <th scope="row">1</th>
-              <td >Radif</td>
-              <td>bukti1.jpg</td>
-              <td>26/Hari</td>
-              <td className="c-green">Active</td>
-              <td className="c-green">Approve</td>
-              <td>
-                <NavDropdown className="inline admin-profile">
-                  <Dropdown.Item className="font-dropdown-size c-green">
-                    Approved
-                  </Dropdown.Item>
-                  <Dropdown.Item className="font-dropdown-size c-red">
-                    Cancel
-                  </Dropdown.Item>
-                </NavDropdown>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Haris Rahman</td>
-              <td>bukti2.jpg</td>
-              <td>26/Hari</td>
-              <td className="c-green">Active</td>
-              <td className="c-green">Approve</td>
-              <td>
-                <NavDropdown className="inline admin-profile">
-                  <Dropdown.Item className="font-dropdown-size c-green">
-                    Approved
-                  </Dropdown.Item>
-                  <Dropdown.Item className="font-dropdown-size c-red">
-                    Cancel
-                  </Dropdown.Item>
-                </NavDropdown>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>Amin Subagio</td>
-              <td>bukti3.jpg</td>
-              <td>0/Hari</td>
-              <td className="c-red">Not Active</td>
-              <td className="c-red">Cancel</td>
-              <td>
-                <NavDropdown className="inline admin-profile">
-                  <Dropdown.Item className="font-dropdown-size c-green">
-                    Approved
-                  </Dropdown.Item>
-                  <Dropdown.Item className="font-dropdown-size c-red">
-                    Cancel
-                  </Dropdown.Item>
-                </NavDropdown>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">4</th>
-              <td>Haris Astina</td>
-              <td>bukti4.jpg</td>
-              <td>0/Hari</td>
-              <td className="c-red">Not Active</td>
-              <td className="c-yellow">Pending</td>
-              <td>
-                <NavDropdown className="inline admin-profile">
-                  <Dropdown.Item className="font-dropdown-size c-green">
-                    Approved
-                  </Dropdown.Item>
-                  <Dropdown.Item className="font-dropdown-size c-red">
-                    Cancel
-                  </Dropdown.Item>
-                </NavDropdown>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">5</th>
-              <td>Aziz Oni On</td>
-              <td>bukti5.jpg</td>
-              <td>0/Hari</td>
-              <td className="c-red">Not Active</td>
-              <td className="c-yellow">Pending</td>
-              <td>
-                <NavDropdown className="inline admin-profile">
-                  <Dropdown.Item className="font-dropdown-size c-green">
-                    Approved
-                  </Dropdown.Item>
-                  <Dropdown.Item className="font-dropdown-size c-red">
-                    Cancel
-                  </Dropdown.Item>
-                </NavDropdown>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">6</th>
-              <td>Sugeng No Pants</td>
-              <td>bukti6.jpg</td>
-              <td>0/Hari</td>
-              <td className="c-red">Not Active</td>
-              <td className="c-yellow">Pending</td>
-              <td>
-                <NavDropdown className="inline admin-profile">
-                  <Dropdown.Item className="font-dropdown-size c-green">
-                    Approved
-                  </Dropdown.Item>
-                  <Dropdown.Item className="font-dropdown-size c-red">
-                    Cancel
-                  </Dropdown.Item>
-                </NavDropdown>
-              </td>
-            </tr>
+            {loading ? (<Loading />) : transaction.map((transaction, index) =>(
+              <TableTransaction key={transaction.id} transaction={transaction} action={action} index={index} />
+            ))}
           </tbody>
         </table>
       </div>

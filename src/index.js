@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './Assets/Main.css'
 
 import { AppContextProvider  } from './Context/GlobalContext'
+import { BookContextProvider } from './Context/BooksContext'
 import App from './App'
 
 
@@ -11,7 +12,9 @@ import App from './App'
 ReactDOM.render(
   <React.StrictMode>
     <AppContextProvider>
-      <App />
+      <BookContextProvider>
+        <App />
+      </BookContextProvider>
     </AppContextProvider>
   </React.StrictMode>,
   document.getElementById('root')

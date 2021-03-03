@@ -1,4 +1,5 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
+import { API } from "../Config/Api"
 import { Nav } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { useHistory } from "react-router-dom"
@@ -10,6 +11,33 @@ import { AppContext } from "../Context/GlobalContext"
 function Sidebar() {
     const history = useHistory();
     const [state, dispatch] = useContext(AppContext);
+
+    useEffect(() => {
+      if (state.user.role == "Admin") {
+        history.push("/transaction");
+      }
+      Subscribe();
+    }, []);
+
+    const Subscribe = async (e) => {
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const transaction = await API.get(`/transaction/user/${state.user.id}`, config);
+
+      if (transaction.data.status === "Success") {
+        const subscribes = transaction.data.data.transaction.userStatus;
+        if (subscribes ===  "Active") {
+          dispatch({
+            type: "SUBSCRIBE",
+          });
+        }
+      }
+    }
+
     function logout() {
           dispatch({
             type: "LOGOUT",
@@ -23,7 +51,7 @@ function Sidebar() {
           <img className="wow-mini mb-3" src="/Img/Content/wow-mini.png" alt="" />
         </Nav.Link>
         <img className="profile-home mb-4" src="/Img/Profile/FotoProfile.png" alt="" />
-        <h6 className="mb-3 font-wg">{state.fullname ? state.fullname: "Not Login"}</h6>
+        <h6 className="mb-3 font-wg">{state.user.fullName ? state.user.fullName : "Error"}</h6>
         <h6 className={state.subscribe ? "c-green font-wg" : "c-red font-wg"}>{state.subscribe ? "Subscribed" : "Not Subscribed Yet"}</h6>
         <div className="line-home mt-4" />
       </Nav.Item>
